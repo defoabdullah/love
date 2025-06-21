@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(255, 105, 180, 0.3);
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 182, 193, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #d63384;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.3);
+        }
+
+        .header p {
+            color: #6f42c1;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d63384;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #f8d7da;
+            border-radius: 15px;
+            font-size: 16px;
+            font-family: inherit;
+            background: linear-gradient(145deg, #fff0f3, #ffffff);
+            color: #495057;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #ff69b4;
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
+            transform: translateY(-2px);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .emotion-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .emotion-btn {
+            padding: 15px 8px;
+            border: 2px solid #f8d7da;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #fff0f3, #ffffff);
+            color: #d63384;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: bold;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+        }
+
+        .emotion-btn .emoji {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .emotion-btn .text {
+            font-size: 0.9em;
+            line-height: 1.2;
+        }
+
+        .emotion-btn:hover {
+            background: linear-gradient(145deg, #ff69b4, #ff1493);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+        }
+
+        .emotion-btn.selected {
+            background: linear-gradient(145deg, #d63384, #ff69b4) !important;
+            color: white !important;
+            border-color: #d63384 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.5);
+        }
+
+        .send-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff69b4, #d63384);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 105, 180, 0.6);
+            background: linear-gradient(135deg, #ff1493, #d63384);
+        }
+
+        .send-btn:active {
+            transform: translateY(0);
+        }
+
+        .hearts {
+            position: absolute;
+            font-size: 2em;
+            color: #ff69b4;
+            opacity: 0.7;
+            animation: float 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .status-success {
+            background: linear-gradient(145deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: linear-gradient(145deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .emotion-options {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .emotion-btn {
+                min-height: 70px;
+                padding: 12px 6px;
+            }
+
+            .emotion-btn .emoji {
+                font-size: 1.5em;
+            }
+
+            .emotion-btn .text {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts" style="top: 20px; right: 20px;">💕</div>
+    <div class="hearts" style="top: 60px; right: 80px; animation-delay: 1s;">💖</div>
+    <div class="hearts" style="top: 30px; left: 30px; animation-delay: 2s;">💗</div>
+    <div class="hearts" style="top: 80px; left: 60px; animation-delay: 0.5s;">💓</div>
+    <div class="hearts" style="bottom: 40px; right: 40px; animation-delay: 1.5s;">💝</div>
+    <div class="hearts" style="bottom: 20px; left: 20px; animation-delay: 2.5s;">💜</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>hi mahrukh! 💝</h1>
+            <p>here you can tell what's bothering you</p>
+        </div>
+
+        <form id="messageForm">
+            <div class="form-group">
+                <label>how are you feeling right now? 💭</label>
+                <div class="emotion-options">
+                    <div class="emotion-btn" data-emotion="sad">
+                        <span class="emoji">😢</span>
+                        <span class="text">sad</span>
+                    </div>
+                    <div class="emotion-btn" data-emotion="upset">
+                        <span class="emoji">😤</span>
+                        <span class="text">upset</span>
+                    </div>
+                    <div class="emotion-btn" data-emotion="lonely">
+                        <span class="emoji">😔</span>
+                        <span class="text">lonely</span>
+                    </div>
+                    <div class="emotion-btn" data-emotion="confused">
+                        <span class="emoji">😕</span>
+                        <span class="text">confused</span>
+                    </div>
+                    <div class="emotion-btn" data-emotion="hurt">
+                        <span class="emoji">💔</span>
+                        <span class="text">hurt</span>
+                    </div>
+                    <div class="emotion-btn" data-emotion="frustrated">
+                        <span class="emoji">😣</span>
+                        <span class="text">frustrated</span>
+                    </div>
+                    <div class="emotion-btn" data-emotion="anxious">
+                        <span class="emoji">😰</span>
+                        <span class="text">anxious</span>
+                    </div>
+                    <div class="emotion-btn" data-emotion="missing">
+                        <span class="emoji">🥺</span>
+                        <span class="text">missing you</span>
+                    </div>
+                    <div class="emotion-btn" data-emotion="overwhelmed">
+                        <span class="emoji">😵‍💫</span>
+                        <span class="text">overwhelmed</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="urgency">how urgent is this? 🚨</label>
+                <select id="urgency" required>
+                    <option value="">choose urgency level...</option>
+                    <option value="casual">💚 just sharing - no rush</option>
+                    <option value="low">💙 just wanted to share</option>
+                    <option value="medium-low">💜 would like to talk when you're free</option>
+                    <option value="medium">💛 would like to talk soon</option>
+                    <option value="medium-high">🧡 hoping to hear from you today</option>
+                    <option value="high">❤️ need you right now</option>
+                    <option value="urgent">💔 please call me ASAP</option>
+                    <option value="critical">🚨 emergency - please respond immediately</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="message">what's on your mind? 💭</label>
+                <textarea id="message" placeholder="tell him what's bothering you or what you're thinking about..." required></textarea>
+            </div>
+
+            <button type="submit" class="send-btn">
+                ✉️ send to your love
+            </button>
+
+            <div id="statusMessage" class="status-message"></div>
+        </form>
+    </div>
+
+    <script>
+        // Function to load EmailJS from multiple sources
+        function loadEmailJS() {
+            return new Promise((resolve, reject) => {
+                // Try multiple CDN sources
+                const cdnSources = [
+                    'https://cdnjs.cloudflare.com/ajax/libs/emailjs-com/3.2.0/email.min.js',
+                    'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js',
+                    'https://unpkg.com/@emailjs/browser@3/dist/email.min.js'
+                ];
+                
+                let currentIndex = 0;
+                
+                function tryNextSource() {
+                    if (currentIndex >= cdnSources.length) {
+                        reject(new Error('All CDN sources failed'));
+                        return;
+                    }
+                    
+                    const script = document.createElement('script');
+                    script.src = cdnSources[currentIndex];
+                    script.onload = () => {
+                        console.log(`EmailJS loaded from: ${cdnSources[currentIndex]}`);
+                        resolve();
+                    };
+                    script.onerror = () => {
+                        console.warn(`Failed to load from: ${cdnSources[currentIndex]}`);
+                        currentIndex++;
+                        tryNextSource();
+                    };
+                    document.head.appendChild(script);
+                }
+                
+                tryNextSource();
+            });
+        }
+        
+        // Load EmailJS and then initialize
+        loadEmailJS()
+            .then(() => {
+                console.log('EmailJS script loaded successfully');
+                // Wait a moment for the library to fully initialize
+                setTimeout(initializeApp, 100);
+            })
+            .catch((error) => {
+                console.error('Failed to load EmailJS:', error);
+                showStatus('❌ Unable to load email service. Please check your internet connection or try a different browser.', 'error');
+            });
+    </script>
+    <script>
+        // EmailJS Configuration - Your actual working values
+        const EMAILJS_CONFIG = {
+            publicKey: 'Dg5tOLbU0xwBK7a9n',
+            serviceId: 'service_4h5qh8c',
+            templateId: 'template_mt8pkio'
+        };
+        
+        // Global variables
+        let selectedEmotion = '';
+        let emailjsInitialized = false;
+        
+        // Initialize everything when EmailJS is loaded
+        function initializeApp() {
+            console.log('Starting app initialization...');
+            initializeEmailJS();
+            initializeEmotionButtons();
+            initializeForm();
+            startFloatingHearts();
+        }
+        
+        // Also initialize on DOMContentLoaded as fallback
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            // Only initialize if EmailJS loading failed
+            setTimeout(() => {
+                if (!emailjsInitialized && typeof emailjs !== 'undefined') {
+                    console.log('Fallback initialization');
+                    initializeApp();
+                }
+            }, 1000);
+        });
+        
+        function initializeEmailJS() {
+            console.log('Checking EmailJS availability...');
+            
+            // Check if EmailJS is loaded
+            if (typeof emailjs === 'undefined') {
+                console.error('EmailJS library not loaded');
+                showStatus('❌ EmailJS library failed to load. Please check your internet connection and refresh.', 'error');
+                return;
+            }
+            
+            console.log('EmailJS library found, initializing...');
+            
+            try {
+                // Initialize EmailJS with your public key
+                emailjs.init(EMAILJS_CONFIG.publicKey);
+                emailjsInitialized = true;
+                console.log('EmailJS initialized successfully with key:', EMAILJS_CONFIG.publicKey);
+                
+                // Test if all config values are present
+                if (!EMAILJS_CONFIG.serviceId || !EMAILJS_CONFIG.templateId) {
+                    throw new Error('Missing service ID or template ID');
+                }
+                
+                console.log('EmailJS configuration validated');
+                showStatus('✅ Email system ready!', 'success');
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    const statusDiv = document.getElementById('statusMessage');
+                    if (statusDiv) statusDiv.style.display = 'none';
+                }, 3000);
+                
+            } catch (error) {
+                console.error('EmailJS initialization error:', error);
+                emailjsInitialized = false;
+                showStatus('❌ EmailJS failed to initialize: ' + error.message, 'error');
+            }
+        }
+        
+        // Safe showStatus function that works even before DOM is ready
+        function showStatus(message, type) {
+            setTimeout(() => {
+                const statusDiv = document.getElementById('statusMessage');
+                if (statusDiv) {
+                    statusDiv.textContent = message;
+                    statusDiv.className = `status-message status-${type}`;
+                    statusDiv.style.display = 'block';
+                }
+            }, 100);
+        }
+        
+        function initializeEmotionButtons() {
+            const emotionButtons = document.querySelectorAll('.emotion-btn');
+            
+            emotionButtons.forEach((btn) => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Remove selected class from all buttons
+                    emotionButtons.forEach(b => b.classList.remove('selected'));
+                    
+                    // Add selected class to clicked button
+                    this.classList.add('selected');
+                    selectedEmotion = this.dataset.emotion;
+                    
+                    // Visual feedback
+                    this.style.transform = 'translateY(-2px)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 200);
+                });
+                
+                // Mobile support
+                btn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    this.click();
+                });
+            });
+        }
+        
+        function initializeForm() {
+            const form = document.getElementById('messageForm');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const urgency = document.getElementById('urgency').value;
+                const messageText = document.getElementById('message').value;
+                
+                // Validation
+                if (!selectedEmotion) {
+                    showStatus('please select how you\'re feeling first 💕', 'error');
+                    return;
+                }
+                
+                if (!urgency) {
+                    showStatus('please select urgency level 💕', 'error');
+                    return;
+                }
+                
+                if (!messageText.trim()) {
+                    showStatus('please write a message 💕', 'error');
+                    return;
+                }
+                
+                // Send the message
+                sendMessage(selectedEmotion, urgency, messageText);
+            });
+        }
+        
+        function sendMessage(emotion, urgency, messageText) {
+            // Show sending status
+            showStatus('💕 sending to your love...', 'success');
+            
+            // Double-check EmailJS is ready
+            if (!emailjsInitialized || typeof emailjs === 'undefined') {
+                console.error('EmailJS not ready when trying to send');
+                showStatus('❌ Email system not ready. Please refresh the page and try again.', 'error');
+                return;
+            }
+            
+            // Get text representations
+            const emotionText = document.querySelector(`[data-emotion="${emotion}"] .text`).textContent;
+            const emotionEmoji = document.querySelector(`[data-emotion="${emotion}"] .emoji`).textContent;
+            const urgencyText = document.querySelector(`#urgency option[value="${urgency}"]`).textContent;
+            
+            // Prepare email template parameters
+            const templateParams = {
+                to_email: 'abdullahshoaib806@gmail.com',
+                from_name: 'your love 💕',
+                subject: `💕 message from your girlfriend - ${urgencyText.split(' ')[0]} ${emotionEmoji} ${emotionText}`,
+                emotion: `${emotionEmoji} ${emotionText}`,
+                urgency: urgencyText,
+                message: messageText,
+                timestamp: new Date().toLocaleString(),
+                // Additional fallback fields in case your template uses different names
+                user_emotion: `${emotionEmoji} ${emotionText}`,
+                user_urgency: urgencyText,
+                user_message: messageText,
+                user_name: 'your love 💕'
+            };
+            
+            console.log('Sending email with params:', templateParams);
+            console.log('Using service:', EMAILJS_CONFIG.serviceId, 'template:', EMAILJS_CONFIG.templateId);
+            
+            // Send email using EmailJS
+            emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, templateParams)
+                .then(function(response) {
+                    console.log('email sent successfully:', response);
+                    showStatus('💕 message sent to your love!', 'success');
+                    
+                    // Reset form after success
+                    setTimeout(() => {
+                        resetForm();
+                    }, 3000);
+                })
+                .catch(function(error) {
+                    console.error('Email failed to send:', error);
+                    console.error('Error details:', error.text);
+                    
+                    // More specific error messages
+                    let errorMessage = '❌ Failed to send message. ';
+                    if (error.status === 400) {
+                        errorMessage += 'Bad request - please check EmailJS template configuration.';
+                    } else if (error.status === 401) {
+                        errorMessage += 'Authentication failed - check your EmailJS keys.';
+                    } else if (error.status === 402) {
+                        errorMessage += 'EmailJS quota exceeded. Please upgrade your plan.';
+                    } else if (error.status === 403) {
+                        errorMessage += 'Forbidden - check your EmailJS service settings.';
+                    } else if (error.status === 429) {
+                        errorMessage += 'Too many requests. Please wait a moment and try again.';
+                    } else if (error.text) {
+                        errorMessage += error.text;
+                    } else {
+                        errorMessage += 'Please try again or contact Abdullah directly.';
+                    }
+                    
+                    showStatus(errorMessage, 'error');
+                });
+        }
+        
+        function resetForm() {
+            const form = document.getElementById('messageForm');
+            const statusDiv = document.getElementById('statusMessage');
+            
+            form.reset();
+            document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
+            selectedEmotion = '';
+            statusDiv.style.display = 'none';
+        }
+        
+        function showStatus(message, type) {
+            setTimeout(() => {
+                const statusDiv = document.getElementById('statusMessage');
+                if (statusDiv) {
+                    statusDiv.textContent = message;
+                    statusDiv.className = `status-message status-${type}`;
+                    statusDiv.style.display = 'block';
+                }
+            }, 100);
+        }
+        
+        function startFloatingHearts() {
+            const heartTypes = ['💖', '💕', '💗', '💓', '💝', '💜'];
+            
+            function createFloatingHeart() {
+                const heart = document.createElement('div');
+                const heartType = heartTypes[Math.floor(Math.random() * heartTypes.length)];
+                
+                heart.innerHTML = heartType;
+                heart.style.position = 'fixed';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '100vh';
+                heart.style.fontSize = (15 + Math.random() * 15) + 'px';
+                heart.style.pointerEvents = 'none';
+                heart.style.zIndex = '1000';
+                heart.style.animation = `floatUp ${3 + Math.random() * 3}s ease-out forwards`;
+                heart.style.opacity = '0.8';
+                
+                document.body.appendChild(heart);
+                
+                setTimeout(() => {
+                    if (heart.parentNode) {
+                        heart.remove();
+                    }
+                }, 6000);
+            }
+            
+            // Create floating hearts at intervals
+            setInterval(createFloatingHeart, 2000);
+        }
+    </script>
+</body>
+</html>
